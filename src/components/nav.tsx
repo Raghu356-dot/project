@@ -12,7 +12,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
-  CaseSensitive,
+  ShieldCheck,
   Settings,
   PanelLeft,
 } from 'lucide-react';
@@ -24,7 +24,7 @@ const links = [
   {
     href: '/analysis-tools',
     label: 'Analysis Tools',
-    icon: CaseSensitive,
+    icon: ShieldCheck,
   },
 ];
 
@@ -61,7 +61,7 @@ export function Nav() {
         <SidebarMenu>
           {links.map((link) => (
             <SidebarMenuItem key={link.href}>
-              <Link href={link.href} passHref>
+              <Link href={link.href} passHref legacyBehavior>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === link.href}
@@ -81,7 +81,7 @@ export function Nav() {
         <SidebarMenu>
             {bottomLinks.map((link) => (
                 <SidebarMenuItem key={link.href}>
-                  <Link href={link.href} passHref>
+                  <Link href={link.href} passHref legacyBehavior>
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === link.href}
