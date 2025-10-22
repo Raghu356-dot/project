@@ -63,9 +63,9 @@ export function Nav() {
             <SidebarMenuItem key={link.href}>
               <Link href={link.href}>
                 <SidebarMenuButton
-                  as="a"
                   isActive={pathname === link.href}
                   tooltip={link.label}
+                  as="a"
                 >
                   <link.icon />
                   <span>{link.label}</span>
@@ -81,9 +81,9 @@ export function Nav() {
                 <SidebarMenuItem key={link.href}>
                   <Link href={link.href}>
                     <SidebarMenuButton
-                      as="a"
                       isActive={pathname === link.href}
                       tooltip={link.label}
+                      as="a"
                     >
                         <link.icon />
                         <span>{link.label}</span>
