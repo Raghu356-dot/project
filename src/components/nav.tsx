@@ -12,13 +12,9 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
-  CreditCard,
-  FileCode,
+  CaseSensitive,
   LayoutDashboard,
-  Link as LinkIcon,
   Settings,
-  ShieldCheck,
-  Siren,
   PanelLeft,
 } from 'lucide-react';
 import { Icons } from './icons';
@@ -32,29 +28,9 @@ const links = [
     icon: LayoutDashboard,
   },
   {
-    href: '/email-screener',
-    label: 'Email Screener',
-    icon: ShieldCheck,
-  },
-  {
-    href: '/url-assessor',
-    label: 'URL Assessor',
-    icon: LinkIcon,
-  },
-  {
-    href: '/malware-analyzer',
-    label: 'Malware Analyzer',
-    icon: FileCode,
-  },
-  {
-    href: '/fraud-detector',
-    label: 'Fraud Detector',
-    icon: CreditCard,
-  },
-  {
-    href: '/incident-commander',
-    label: 'Incident Commander',
-    icon: Siren,
+    href: '/analysis-tools',
+    label: 'Analysis Tools',
+    icon: CaseSensitive,
   },
 ];
 
@@ -91,16 +67,15 @@ export function Nav() {
         <SidebarMenu>
           {links.map((link) => (
             <SidebarMenuItem key={link.href}>
+              <Link href={link.href} legacyBehavior passHref>
                 <SidebarMenuButton
-                  asChild
                   isActive={pathname === link.href}
                   tooltip={link.label}
                 >
-                  <Link href={link.href}>
-                    <link.icon />
-                    <span>{link.label}</span>
-                  </Link>
+                  <link.icon />
+                  <span>{link.label}</span>
                 </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -109,16 +84,15 @@ export function Nav() {
         <SidebarMenu>
             {bottomLinks.map((link) => (
                 <SidebarMenuItem key={link.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === link.href}
-                      tooltip={link.label}
-                    >
-                      <Link href={link.href}>
-                        <link.icon />
-                        <span>{link.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <Link href={link.href} legacyBehavior passHref>
+                        <SidebarMenuButton
+                          isActive={pathname === link.href}
+                          tooltip={link.label}
+                        >
+                          <link.icon />
+                          <span>{link.label}</span>
+                        </SidebarMenuButton>
+                    </Link>
                 </SidebarMenuItem>
             ))}
         </SidebarMenu>
