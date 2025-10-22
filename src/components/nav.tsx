@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/sidebar';
 import {
   CaseSensitive,
-  LayoutDashboard,
   Settings,
   PanelLeft,
 } from 'lucide-react';
@@ -24,11 +23,6 @@ import { useSidebar } from '@/components/ui/sidebar';
 const links = [
   {
     href: '/',
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    href: '/analysis-tools',
     label: 'Analysis Tools',
     icon: CaseSensitive,
   },
@@ -67,13 +61,16 @@ export function Nav() {
         <SidebarMenu>
           {links.map((link) => (
             <SidebarMenuItem key={link.href}>
-              <Link href={link.href}>
+              <Link href={link.href} passHref>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname === link.href}
                   tooltip={link.label}
                 >
-                  <link.icon />
-                  <span>{link.label}</span>
+                  <>
+                    <link.icon />
+                    <span>{link.label}</span>
+                  </>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -84,13 +81,16 @@ export function Nav() {
         <SidebarMenu>
             {bottomLinks.map((link) => (
                 <SidebarMenuItem key={link.href}>
-                  <Link href={link.href}>
+                  <Link href={link.href} passHref>
                     <SidebarMenuButton
+                      asChild
                       isActive={pathname === link.href}
                       tooltip={link.label}
                     >
-                      <link.icon />
-                      <span>{link.label}</span>
+                      <>
+                        <link.icon />
+                        <span>{link.label}</span>
+                      </>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>

@@ -1,51 +1,43 @@
 import { PageHeader } from "@/components/page-header";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowRight, CaseSensitive } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EmailScreenerForm } from "@/app/email-screener/email-screener-form";
+import { UrlAssessorForm } from "@/app/url-assessor/url-assessor-form";
+import { MalwareAnalyzerForm } from "@/app/malware-analyzer/malware-analyzer-form";
+import { FraudDetectorForm } from "@/app/fraud-detector/fraud-detector-form";
+import { IncidentCommanderForm } from "@/app/incident-commander/incident-commander-form";
 
-const tools = [
-  {
-    title: 'Analysis Tools',
-    description: 'A suite of AI-powered tools to analyze and mitigate security threats.',
-    href: '/analysis-tools',
-    icon: CaseSensitive,
-  },
-];
-
-export default function HomePage() {
+export default function AnalysisToolsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <PageHeader
-        title="CyberSentinel AI Dashboard"
-        description="An overview of the AI-powered cybersecurity analysis agents."
+        title="Analysis Tools"
+        description="A suite of AI-powered tools to analyze and mitigate security threats."
       />
-      <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool) => (
-          <Card key={tool.title} className="flex flex-col hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0">
-                  <tool.icon className="h-8 w-8 text-accent" />
-                </div>
-                <CardTitle>{tool.title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <p className="text-muted-foreground">{tool.description}</p>
-            </CardContent>
-            <CardFooter>
-               <Button asChild variant="outline" className="w-full">
-                <Link href={tool.href}>
-                  <span className="flex items-center">
-                    Launch Tool
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </span>
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+      <div className="mt-8">
+        <Tabs defaultValue="email-screener">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-5">
+            <TabsTrigger value="email-screener">Email Screener</TabsTrigger>
+            <TabsTrigger value="url-assessor">URL Assessor</TabsTrigger>
+            <TabsTrigger value="malware-analyzer">Malware Analyzer</TabsTrigger>
+            <TabsTrigger value="fraud-detector">Fraud Detector</TabsTrigger>
+            <TabsTrigger value="incident-commander">Incident Commander</TabsTrigger>
+          </TabsList>
+          <TabsContent value="email-screener">
+            <EmailScreenerForm />
+          </TabsContent>
+          <TabsContent value="url-assessor">
+            <UrlAssessorForm />
+          </TabsContent>
+          <TabsContent value="malware-analyzer">
+            <MalwareAnalyzerForm />
+          </TabsContent>
+          <TabsContent value="fraud-detector">
+            <FraudDetectorForm />
+          </TabsContent>
+          <TabsContent value="incident-commander">
+            <IncidentCommanderForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
