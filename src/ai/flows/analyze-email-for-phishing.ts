@@ -28,17 +28,11 @@ const prompt = ai.definePrompt({
   name: 'analyzeEmailForPhishingPrompt',
   input: {schema: AnalyzeEmailForPhishingInputSchema},
   output: {schema: AnalyzeEmailForPhishingOutputSchema},
-  prompt: `You are an expert security analyst specializing in email-based threats. Analyze the email content provided and identify signs of phishing, scams, or malicious intent. Return your findings as a JSON object.
+  prompt: `You are an expert security analyst specializing in email-based threats. Analyze the following email content and identify any signs of phishing, scams, or malicious intent.
 
-Email Content: {{{$input}}}
-
-Your analysis should include:
-- A summary explaining the identified threats, the likely intent of the sender, and the key red flags found (like suspicious links or urgent language).
-- A verdict indicating whether the email is \"Safe\" or \"Malicious\".
-- Advice providing a clear, one-sentence recommendation for the user.
-
-Ensure the output is a valid JSON object conforming to the following schema:
-${JSON.stringify(AnalyzeEmailForPhishingOutputSchema.describe(''))}`,
+Email Content:
+{{{$input}}}
+`,
 });
 
 const analyzeEmailForPhishingFlow = ai.defineFlow(
