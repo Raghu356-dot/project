@@ -59,12 +59,12 @@ export default function HomePage() {
               <p className="text-muted-foreground">{agent.description}</p>
             </CardContent>
             <CardFooter>
-                <Link href={agent.href} passHref legacyBehavior>
-                  <Button variant="outline" className="w-full">
-                    Launch Agent
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+              <Button asChild variant="outline" className="w-full">
+                <Link href={agent.href}>
+                  Launch Agent
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
+              </Button>
             </CardFooter>
           </Card>
         ))}

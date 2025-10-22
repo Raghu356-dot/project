@@ -91,15 +91,16 @@ export function Nav() {
         <SidebarMenu>
           {links.map((link) => (
             <SidebarMenuItem key={link.href}>
-              <Link href={link.href} passHref>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname === link.href}
                   tooltip={link.label}
                 >
-                  <link.icon />
-                  <span>{link.label}</span>
+                  <Link href={link.href}>
+                    <link.icon />
+                    <span>{link.label}</span>
+                  </Link>
                 </SidebarMenuButton>
-              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -108,15 +109,16 @@ export function Nav() {
         <SidebarMenu>
             {bottomLinks.map((link) => (
                 <SidebarMenuItem key={link.href}>
-                <Link href={link.href} passHref>
                     <SidebarMenuButton
+                      asChild
                       isActive={pathname === link.href}
                       tooltip={link.label}
                     >
-                      <link.icon />
-                      <span>{link.label}</span>
+                      <Link href={link.href}>
+                        <link.icon />
+                        <span>{link.label}</span>
+                      </Link>
                     </SidebarMenuButton>
-                </Link>
                 </SidebarMenuItem>
             ))}
         </SidebarMenu>
