@@ -5,8 +5,8 @@ import type { DetectMalwareInFileOutput } from "@/ai/flows/detect-malware-in-fil
 import type { ExplainFraudulentTransactionOutput } from "@/ai/flows/explain-fraudulent-transaction";
 
 export type AnalysisResult =
-  | AnalyzeEmailForPhishingOutput
-  | AssessUrlRiskOutput
-  | DetectMalwareInFileOutput
-  | ExplainFraudulentTransactionOutput
-  | CorrelateSecurityEventsOutput;
+  | (AnalyzeEmailForPhishingOutput & { verdict?: string })
+  | (AssessUrlRiskOutput & { verdict?: string })
+  | (DetectMalwareInFileOutput & { verdict?: string })
+  | (ExplainFraudulentTransactionOutput & { verdict?: string })
+  | (CorrelateSecurityEventsOutput & { verdict?: string });

@@ -14,9 +14,9 @@ const AnalyzeEmailForPhishingInputSchema = z.string().describe('The raw text con
 export type AnalyzeEmailForPhishingInput = z.infer<typeof AnalyzeEmailForPhishingInputSchema>;
 
 const AnalyzeEmailForPhishingOutputSchema = z.object({
-  summary: z.string().describe('A short paragraph explaining the identified threats, the likely intent of the sender, and the key red flags found (like suspicious links or urgent language).'),
-  verdict: z.enum(['Safe', 'Malicious']).describe('A single, definitive word: \"Safe\" or \"Malicious\".'),
-  advice: z.string().describe('A clear, one-sentence recommendation for the user (e.g., \"Delete this email immediately and do not click any links.\").'),
+  result: z.enum(['Safe', 'Suspicious', 'Malicious']).describe('The verdict of the analysis.'),
+  summary: z.string().describe('Brief summary of findings and tone of the email.'),
+  advice: z.string().describe('Clear security recommendation for the user.'),
 });
 export type AnalyzeEmailForPhishingOutput = z.infer<typeof AnalyzeEmailForPhishingOutputSchema>;
 
@@ -28,10 +28,33 @@ const prompt = ai.definePrompt({
   name: 'analyzeEmailForPhishingPrompt',
   input: {schema: AnalyzeEmailForPhishingInputSchema},
   output: {schema: AnalyzeEmailForPhishingOutputSchema},
-  prompt: `You are an expert security analyst specializing in email-based threats. Analyze the following email content and identify any signs of phishing, scams, or malicious intent.
+  prompt: `You are an Email Analysis AI Agent.
 
-Email Content:
+Your task is to analyze the content of an email and detect potential security threats such as phishing, spam, or malicious intent.
+
+Always look for email text provided between the markers:
+--- EMAIL START --- and --- EMAIL END ---
+
+If you find text between these markers, analyze it completely — including:
+- Subject line
+- Sender address
+- Body text
+- Any URLs, attachments, or suspicious words
+
+If no content is found between these markers, respond exactly with:
+"No email content found. Please paste a valid email between --- EMAIL START --- and --- EMAIL END ---."
+
+When content is found, return your analysis in this JSON format:
+
+{
+  "result": "Safe / Suspicious / Malicious",
+  "summary": "Brief summary of findings and tone of the email.",
+  "advice": "Clear security recommendation for the user."
+}
+
+--- EMAIL START ---
 {{{$input}}}
+--- EMAIL END ---
 `,
 });
 

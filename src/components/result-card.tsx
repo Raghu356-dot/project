@@ -14,8 +14,11 @@ interface ResultCardProps {
 }
 
 function getVerdict(result: AnalysisResult) {
-  if ("verdict" in result) {
+  if ("verdict" in result && result.verdict) {
     return result.verdict;
+  }
+  if ("result" in result && typeof result.result === "string") {
+    return result.result;
   }
   return null;
 }
@@ -23,7 +26,14 @@ function getVerdict(result: AnalysisResult) {
 function getBadgeVariant(verdict: string | null) {
   if (!verdict) return "secondary";
   const safeVerdicts = ["Safe", "Genuine", "Unrelated"];
-  return safeVerdicts.includes(verdict) ? "secondary" : "destructive";
+  if (safeVerdicts.includes(verdict)) {
+    return "secondary";
+  }
+  const suspiciousVerdicts = ["Suspicious", "Medium"];
+    if (suspiciousVerdicts.includes(verdict)) {
+        return "default";
+    }
+  return "destructive";
 }
 
 function formatKey(key: string) {
@@ -53,7 +63,7 @@ export function ResultCard({ result }: ResultCardProps) {
       <CardContent>
         <dl className="space-y-6">
           {Object.entries(result).map(([key, value]) => {
-            if (key === "verdict") return null;
+            if (key === "verdict" || key === "result") return null;
             return (
               <div key={key} className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-2 md:gap-4 items-start">
                 <dt className="font-semibold text-muted-foreground break-words">
