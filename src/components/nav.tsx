@@ -68,7 +68,7 @@ const bottomLinks = [
 
 export function Nav() {
   const pathname = usePathname();
-  const { toggleSidebar, state } = useSidebar();
+  const { toggleSidebar } = useSidebar();
   
   return (
     <>
@@ -93,7 +93,6 @@ export function Nav() {
             <SidebarMenuItem key={link.href}>
               <Link href={link.href} passHref>
                 <SidebarMenuButton
-                  asChild
                   isActive={pathname === link.href}
                   tooltip={link.label}
                 >
@@ -111,12 +110,11 @@ export function Nav() {
                 <SidebarMenuItem key={link.href}>
                 <Link href={link.href} passHref>
                     <SidebarMenuButton
-                    asChild
-                    isActive={pathname === link.href}
-                    tooltip={link.label}
+                      isActive={pathname === link.href}
+                      tooltip={link.label}
                     >
-                    <link.icon />
-                    <span>{link.label}</span>
+                      <link.icon />
+                      <span>{link.label}</span>
                     </SidebarMenuButton>
                 </Link>
                 </SidebarMenuItem>
