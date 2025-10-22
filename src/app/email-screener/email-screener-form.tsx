@@ -43,7 +43,7 @@ export function EmailScreenerForm() {
     setIsLoading(true);
     setResult(null);
     try {
-      const analysisResult = await analyzeEmailForPhishing(values.emailContent);
+      const analysisResult = await analyzeEmailForPhishing({ email_content: values.emailContent });
       setResult(analysisResult);
       form.reset({ emailContent: '' });
     } catch (e) {
