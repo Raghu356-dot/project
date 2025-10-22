@@ -54,7 +54,6 @@ export function Nav() {
               <PanelLeft className="size-5" />
             </Button>
           <Icons.Logo className="size-6 text-accent" />
-          <h1 className="text-lg font-semibold font-headline">CyberSentinel AI</h1>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
