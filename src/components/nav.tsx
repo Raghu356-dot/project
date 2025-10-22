@@ -22,7 +22,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 
 const links = [
   {
-    href: '/',
+    href: '/analysis-tools',
     label: 'Analysis Tools',
     icon: CaseSensitive,
   },
@@ -67,10 +67,10 @@ export function Nav() {
                   isActive={pathname === link.href}
                   tooltip={link.label}
                 >
-                  <>
+                  <a>
                     <link.icon />
                     <span>{link.label}</span>
-                  </>
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -87,10 +87,10 @@ export function Nav() {
                       isActive={pathname === link.href}
                       tooltip={link.label}
                     >
-                      <>
+                      <a>
                         <link.icon />
                         <span>{link.label}</span>
-                      </>
+                      </a>
                     </SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
