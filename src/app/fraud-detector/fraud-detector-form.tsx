@@ -23,6 +23,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ResultCard } from '@/components/result-card';
 import { Slider } from '@/components/ui/slider';
 
+const defaultValues = {
+  transactionDetails: {
+    amount: 1500,
+    merchant: 'Global Electronics',
+    location: 'Unknown',
+    time: new Date().toISOString(),
+  },
+  userProfileSummary: 'User typically shops at local grocery stores and gas stations, with an average transaction value of $50. User is currently located in New York.',
+  anomalyScore: 75,
+};
+
 const formSchema = z.object({
   transactionDetails: z.object({
     amount: z.coerce.number().positive(),
@@ -43,16 +54,7 @@ export function FraudDetectorForm() {
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      transactionDetails: {
-        amount: 1500,
-        merchant: 'Global Electronics',
-        location: 'Unknown',
-        time: new Date().toISOString(),
-      },
-      userProfileSummary: 'User typically shops at local grocery stores and gas stations, with an average transaction value of $50. User is currently located in New York.',
-      anomalyScore: 75,
-    },
+    defaultValues,
   });
 
   async function onSubmit(values: FormSchema) {
@@ -61,6 +63,7 @@ export function FraudDetectorForm() {
     try {
       const analysisResult = await explainFraudulentTransaction(values);
       setResult(analysisResult);
+      form.reset(defaultValues);
     } catch (e) {
       toast({
         variant: 'destructive',

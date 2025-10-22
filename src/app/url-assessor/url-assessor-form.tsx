@@ -45,6 +45,7 @@ export function UrlAssessorForm() {
     try {
       const analysisResult = await assessUrlRisk({ url: values.url });
       setResult(analysisResult);
+      form.reset();
     } catch (e) {
       toast({
         variant: 'destructive',

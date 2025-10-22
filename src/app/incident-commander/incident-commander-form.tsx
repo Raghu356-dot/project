@@ -18,6 +18,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 
 
+const defaultValues = {
+  emailAnalysis: {
+    summary: 'A phishing email from a sender posing as the user\'s bank was detected. It contained a suspicious link and urged immediate action.',
+    verdict: 'Malicious' as const,
+    advice: 'Delete this email immediately and do not click any links.',
+  },
+  transactionDetails: {
+    explanation: 'The transaction was flagged due to occurring from a new, unrecognized device just minutes after a known phishing attempt.',
+    riskLevel: 'High' as const,
+    verdict: 'Fraudulent' as const,
+    advice: 'It is recommended to contact the user to verify this transaction.',
+    amount: 1500,
+    merchant: 'Global Electronics',
+    location: 'Unknown',
+    time: new Date().toISOString(),
+    userProfileSummary: 'User typically shops at local grocery stores and gas stations.',
+    anomalyScore: 95,
+  },
+};
+
 const formSchema = z.object({
   emailAnalysis: z.object({
     summary: z.string().min(1, 'Summary is required.'),
@@ -47,25 +67,7 @@ export function IncidentCommanderForm() {
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      emailAnalysis: {
-        summary: 'A phishing email from a sender posing as the user\'s bank was detected. It contained a suspicious link and urged immediate action.',
-        verdict: 'Malicious',
-        advice: 'Delete this email immediately and do not click any links.',
-      },
-      transactionDetails: {
-        explanation: 'The transaction was flagged due to occurring from a new, unrecognized device just minutes after a known phishing attempt.',
-        riskLevel: 'High',
-        verdict: 'Fraudulent',
-        advice: 'It is recommended to contact the user to verify this transaction.',
-        amount: 1500,
-        merchant: 'Global Electronics',
-        location: 'Unknown',
-        time: new Date().toISOString(),
-        userProfileSummary: 'User typically shops at local grocery stores and gas stations.',
-        anomalyScore: 95,
-      },
-    },
+    defaultValues,
   });
 
   async function onSubmit(values: FormSchema) {
@@ -74,6 +76,7 @@ export function IncidentCommanderForm() {
     try {
       const analysisResult = await correlateSecurityEvents(values);
       setResult(analysisResult);
+      form.reset(defaultValues);
     } catch (e) {
       toast({
         variant: 'destructive',

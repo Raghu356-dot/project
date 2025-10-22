@@ -45,6 +45,7 @@ export function EmailScreenerForm() {
     try {
       const analysisResult = await analyzeEmailForPhishing(values.emailContent);
       setResult(analysisResult);
+      form.reset();
     } catch (e) {
       toast({
         variant: 'destructive',
