@@ -45,7 +45,7 @@ export function EmailScreenerForm() {
     try {
       const analysisResult = await analyzeEmailForPhishing(values.emailContent);
       setResult(analysisResult);
-      form.reset();
+      form.reset({ emailContent: '' });
     } catch (e) {
       toast({
         variant: 'destructive',
@@ -76,7 +76,7 @@ export function EmailScreenerForm() {
                     <FormControl>
                       <Textarea
                         placeholder="From: suspicious@example.com..."
-                        className="min-h-[200px]"
+                        className="min-h-[400px]"
                         {...field}
                       />
                     </FormControl>
