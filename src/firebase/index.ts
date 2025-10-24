@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  initializeApp,
-  getApps,
-  FirebaseApp,
-  FirebaseOptions,
-} from 'firebase/app';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import {
@@ -19,17 +14,7 @@ import { FirebaseClientProvider } from './client-provider';
 import { useUser } from './auth/use-user';
 import { useCollection } from './firestore/use-collection';
 import { useDoc } from './firestore/use-doc';
-
-// Note: This is a public config and is safe to expose.
-// Security is handled by Firestore Security Rules and App Check.
-const firebaseConfig: FirebaseOptions = {
-  apiKey: process.env.NEXT_PUBLIC_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-};
+import { firebaseConfig } from './config';
 
 let firebaseApp: FirebaseApp | undefined;
 let auth: Auth | undefined;
@@ -45,6 +30,9 @@ function initializeFirebase(): {
     typeof window !== 'undefined' &&
     !getApps()?.length
   ) {
+    if (!firebaseConfig.apiKey) {
+      throw new Error('Firebase API key is missing. Please check your configuration.');
+    }
     firebaseApp = initializeApp(firebaseConfig);
     auth = getAuth(firebaseApp);
     firestore = getFirestore(firebaseApp);
