@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
-import { assessUrlRisk, type AssessUrlRiskOutput } from '@/ai/flows/assess-url-risk';
+import {
+  assessUrlRisk,
+  type AssessUrlRiskOutput,
+} from '@/ai/flows/assess-url-risk';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,6 +24,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResultCard } from '@/components/result-card';
+import { useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   url: z.string().url({
@@ -31,6 +36,7 @@ export function UrlAssessorForm() {
   const [result, setResult] = React.useState<AssessUrlRiskOutput | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,6 +51,16 @@ export function UrlAssessorForm() {
     try {
       const analysisResult = await assessUrlRisk({ url: values.url });
       setResult(analysisResult);
+
+      if (firestore) {
+        const historyCollection = collection(firestore, 'analysis_history');
+        await addDoc(historyCollection, {
+          ...analysisResult,
+          agent: 'URL Assessor',
+          createdAt: serverTimestamp(),
+        });
+      }
+
       form.reset();
     } catch (e) {
       toast({
@@ -72,7 +88,9 @@ export function UrlAssessorForm() {
                 name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Enter the URL you want to assess for risk</FormLabel>
+                    <FormLabel>
+                      Enter the URL you want to assess for risk
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="url"

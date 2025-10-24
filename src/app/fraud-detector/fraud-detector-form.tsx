@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
-import { explainFraudulentTransaction, type ExplainFraudulentTransactionOutput } from '@/ai/flows/explain-fraudulent-transaction';
+import {
+  explainFraudulentTransaction,
+  type ExplainFraudulentTransactionOutput,
+} from '@/ai/flows/explain-fraudulent-transaction';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -18,8 +22,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 import { ResultCard } from '@/components/result-card';
+import { useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   transactionContext: z.string().min(50, {
@@ -28,9 +39,11 @@ const formSchema = z.object({
 });
 
 export function FraudDetectorForm() {
-  const [result, setResult] = React.useState<ExplainFraudulentTransactionOutput | null>(null);
+  const [result, setResult] =
+    React.useState<ExplainFraudulentTransactionOutput | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,8 +56,20 @@ export function FraudDetectorForm() {
     setIsLoading(true);
     setResult(null);
     try {
-      const analysisResult = await explainFraudulentTransaction({ transaction_context: values.transactionContext });
+      const analysisResult = await explainFraudulentTransaction({
+        transaction_context: values.transactionContext,
+      });
       setResult(analysisResult);
+
+      if (firestore) {
+        const historyCollection = collection(firestore, 'analysis_history');
+        await addDoc(historyCollection, {
+          ...analysisResult,
+          agent: 'Fraud Detector',
+          createdAt: serverTimestamp(),
+        });
+      }
+
       form.reset({ transactionContext: '' });
     } catch (e) {
       toast({
