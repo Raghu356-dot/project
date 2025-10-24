@@ -11,14 +11,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ExplainFraudulentTransactionInputSchema = z.object({
-  transactionDetails: z.object({
-    amount: z.number().describe('The amount of the transaction.'),
-    merchant: z.string().describe('The merchant involved in the transaction.'),
-    location: z.string().describe('The location of the transaction.'),
-    time: z.string().describe('The time of the transaction.'),
-  }).describe('Details of the transaction.'),
-  userProfileSummary: z.string().describe('A summary of the user profile, including typical behavior and location.'),
-  anomalyScore: z.number().min(0).max(100).describe('A numerical anomaly score (0-100) indicating how unusual the transaction is.'),
+  transaction_context: z.string().describe('A block of text containing all available details about the transaction, user profile, and any other relevant context.'),
 });
 export type ExplainFraudulentTransactionInput = z.infer<typeof ExplainFraudulentTransactionInputSchema>;
 
@@ -38,19 +31,12 @@ const prompt = ai.definePrompt({
   name: 'explainFraudulentTransactionPrompt',
   input: {schema: ExplainFraudulentTransactionInputSchema},
   output: {schema: ExplainFraudulentTransactionOutputSchema},
-  prompt: `You are an expert in financial fraud detection. Analyze the provided transaction data and user context to determine if the transaction is fraudulent.
+  prompt: `You are an expert in financial fraud detection. Analyze the provided text containing transaction data and user context to determine if the transaction is fraudulent.
 
-Transaction Details:
-Amount: {{{transactionDetails.amount}}}
-Merchant: {{{transactionDetails.merchant}}}
-Location: {{{transactionDetails.location}}}
-Time: {{{transactionDetails.time}}}
+Parse all relevant details from the following text block:
+{{{transaction_context}}}
 
-User Profile Summary: {{{userProfileSummary}}}
-
-Anomaly Score: {{{anomalyScore}}}
-
-Based on this information, provide:
+Based on your analysis of all the information provided, provide:
 - A paragraph explaining the top 2-3 factors that make the transaction risky in the explanation field.
 - A risk assessment (High, Medium, or Low) in the riskLevel field.
 - A definitive verdict (Genuine or Fraudulent) in the verdict field.
