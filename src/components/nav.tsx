@@ -15,18 +15,12 @@ import {
   ShieldCheck,
   Settings,
   PanelLeft,
-  LayoutDashboard,
 } from 'lucide-react';
 import { Icons } from './icons';
 import { Button } from './ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 
 const links = [
-  {
-    href: '/',
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-  },
   {
     href: '/analysis-tools',
     label: 'Analysis Tools',
