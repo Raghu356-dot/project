@@ -17,18 +17,7 @@ const CorrelateSecurityEventsInputSchema = z.object({
     verdict: z.enum(['Safe', 'Malicious']).describe('A single word verdict on the email.'),
     advice: z.string().describe('A recommendation for the user regarding the email.'),
   }).describe('The analysis report from the Email Screener agent.'),
-  transactionDetails: z.object({
-    explanation: z.string().describe('Explanation of why the transaction was flagged as fraudulent.'),
-    riskLevel: z.enum(['High', 'Medium', 'Low']).describe('Risk assessment of the transaction.'),
-    verdict: z.enum(['Genuine', 'Fraudulent']).describe('A single word verdict on the transaction.'),
-    advice: z.string().describe('A recommendation regarding the transaction.'),
-    amount: z.number().describe('The transaction amount.'),
-    merchant: z.string().describe('The transaction merchant.'),
-    location: z.string().describe('The transaction location.'),
-    time: z.string().describe('The transaction time.'),
-    userProfileSummary: z.string().describe('A summary of the user profile and behavior.'),
-    anomalyScore: z.number().describe('A numerical anomaly score (0-100) indicating how unusual the transaction is.'),
-  }).describe('The details of a fraudulent financial transaction.'),
+  transactionContext: z.string().describe('A block of text containing all available details about the transaction, user profile, and any other relevant context.'),
 });
 
 export type CorrelateSecurityEventsInput = z.infer<typeof CorrelateSecurityEventsInputSchema>;
@@ -57,19 +46,10 @@ const prompt = ai.definePrompt({
   Verdict: {{{emailAnalysis.verdict}}}
   Advice: {{{emailAnalysis.advice}}}
 
-  Here are the details of a fraudulent financial transaction:
-  Explanation: {{{transactionDetails.explanation}}}
-  Risk Level: {{{transactionDetails.riskLevel}}}
-  Verdict: {{{transactionDetails.verdict}}}
-  Advice: {{{transactionDetails.advice}}}
-  Amount: {{{transactionDetails.amount}}}
-  Merchant: {{{transactionDetails.merchant}}}
-  Location: {{{transactionDetails.location}}}
-  Time: {{{transactionDetails.time}}}
-  User Profile Summary: {{{transactionDetails.userProfileSummary}}}
-  Anomaly Score: {{{transactionDetails.anomalyScore}}}
+  Here is the context for a potentially fraudulent financial transaction:
+  {{{transactionContext}}}
 
-  Based on this information, determine if the events are connected and provide a correlation summary, recommended actions, a verdict, and advice.
+  Based on all this information, determine if the events are connected and provide a correlation summary, recommended actions, a verdict, and advice.
 
   Ensure the output is a valid JSON object conforming to the following schema:
   ${JSON.stringify(CorrelateSecurityEventsOutputSchema.describe(''))}`,
@@ -86,4 +66,3 @@ const correlateSecurityEventsFlow = ai.defineFlow(
     return output!;
   }
 );
-

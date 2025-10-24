@@ -15,7 +15,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResultCard } from '@/components/result-card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 
 
 const defaultValues = {
@@ -24,18 +23,7 @@ const defaultValues = {
     verdict: 'Malicious' as const,
     advice: 'Delete this email immediately and do not click any links.',
   },
-  transactionDetails: {
-    explanation: 'The transaction was flagged due to occurring from a new, unrecognized device just minutes after a known phishing attempt.',
-    riskLevel: 'High' as const,
-    verdict: 'Fraudulent' as const,
-    advice: 'It is recommended to contact the user to verify this transaction.',
-    amount: 1500,
-    merchant: 'Global Electronics',
-    location: 'Unknown',
-    time: new Date().toISOString(),
-    userProfileSummary: 'User typically shops at local grocery stores and gas stations.',
-    anomalyScore: 95,
-  },
+  transactionContext: 'Amount: $1500\nMerchant: Global Electronics\nLocation: Unknown (IP from a different country)\nTime: 2 minutes after email was received\nUser Profile: User typically shops at local grocery stores and gas stations. Average transaction is $45.\nAnomaly Score: 95',
 };
 
 const formSchema = z.object({
@@ -44,17 +32,8 @@ const formSchema = z.object({
     verdict: z.enum(['Safe', 'Malicious']),
     advice: z.string().min(1, 'Advice is required.'),
   }),
-  transactionDetails: z.object({
-    explanation: z.string().min(1, 'Explanation is required.'),
-    riskLevel: z.enum(['High', 'Medium', 'Low']),
-    verdict: z.enum(['Genuine', 'Fraudulent']),
-    advice: z.string().min(1, 'Advice is required.'),
-    amount: z.coerce.number().positive(),
-    merchant: z.string().min(1, 'Merchant is required.'),
-    location: z.string().min(1, 'Location is required.'),
-    time: z.string().min(1, 'Time is required.'),
-    userProfileSummary: z.string().min(1, 'User profile summary is required.'),
-    anomalyScore: z.number().min(0).max(100),
+  transactionContext: z.string().min(50, {
+    message: 'Transaction details must be at least 50 characters.',
   }),
 });
 
@@ -117,43 +96,23 @@ export function IncidentCommanderForm() {
               <div className="space-y-4">
                 <h3 className="font-medium text-lg">Event 2: Fraudulent Transaction Details</h3>
                 <div className="p-4 border rounded-lg space-y-4">
-                  <FormField control={form.control} name="transactionDetails.explanation" render={({ field }) => (
-                    <FormItem><FormLabel>Explanation</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField control={form.control} name="transactionDetails.riskLevel" render={({ field }) => (
-                        <FormItem><FormLabel>Risk Level</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="Low">Low</SelectItem><SelectItem value="Medium">Medium</SelectItem><SelectItem value="High">High</SelectItem></SelectContent></Select><FormMessage /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="transactionDetails.verdict" render={({ field }) => (
-                        <FormItem><FormLabel>Verdict</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl><SelectContent><SelectItem value="Genuine">Genuine</SelectItem><SelectItem value="Fraudulent">Fraudulent</SelectItem></SelectContent></Select><FormMessage /></FormItem>
-                      )} />
-                    </div>
-                  <FormField control={form.control} name="transactionDetails.advice" render={({ field }) => (
-                    <FormItem><FormLabel>Advice</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField control={form.control} name="transactionDetails.amount" render={({ field }) => (
-                        <FormItem><FormLabel>Amount</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={form.control} name="transactionDetails.merchant" render={({ field }) => (
-                        <FormItem><FormLabel>Merchant</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={form.control} name="transactionDetails.location" render={({ field }) => (
-                        <FormItem><FormLabel>Location</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    <FormField control={form.control} name="transactionDetails.time" render={({ field }) => (
-                        <FormItem><FormLabel>Time</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                    )} />
-                  </div>
-                  <FormField control={form.control} name="transactionDetails.userProfileSummary" render={({ field }) => (
-                    <FormItem><FormLabel>User Profile Summary</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                  )} />
-                  <FormField control={form.control} name="transactionDetails.anomalyScore" render={({ field: { value, onChange } }) => (
-                    <FormItem>
-                      <FormLabel>Anomaly Score: {value}</FormLabel>
-                      <FormControl><Slider value={[value]} onValueChange={(vals) => onChange(vals[0])} max={100} step={1} /></FormControl>
-                    </FormItem>
-                  )} />
+                    <FormField
+                      control={form.control}
+                      name="transactionContext"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Transaction and User Context</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Amount: $1500, Merchant: Global Electronics..."
+                              className="min-h-[200px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                 </div>
               </div>
 
