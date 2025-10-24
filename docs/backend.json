@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "analysis_history": {
+      "title": "Analysis History",
+      "description": "A record of a security analysis performed by an AI agent.",
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "string",
+          "description": "The name of the agent that performed the analysis."
+        },
+        "result": {
+          "type": "string",
+          "description": "The verdict of the analysis (e.g., Safe, Suspicious, Malicious)."
+        },
+        "summary": {
+          "type": "string",
+          "description": "A brief summary of the findings."
+        },
+        "advice": {
+          "type": "string",
+          "description": "The recommended action for the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the analysis was created."
+        }
+      }
+    }
+  },
+  "auth": {
+    "providers": []
+  },
+  "firestore": {
+    "/analysis_history/{historyId}": {
+      "schema": {
+        "$ref": "#/entities/analysis_history"
+      },
+      "description": "Stores the history of all security analysis events."
+    }
+  }
+}

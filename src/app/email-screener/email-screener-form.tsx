@@ -6,8 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
-import { analyzeEmailForPhishing, type AnalyzeEmailForPhishingOutput } from '@/ai/flows/analyze-email-for-phishing';
+import {
+  analyzeEmailForPhishing,
+  type AnalyzeEmailForPhishingOutput,
+} from '@/ai/flows/analyze-email-for-phishing';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -20,6 +24,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResultCard } from '@/components/result-card';
+import { useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   emailContent: z.string().min(50, {
@@ -28,9 +33,11 @@ const formSchema = z.object({
 });
 
 export function EmailScreenerForm() {
-  const [result, setResult] = React.useState<AnalyzeEmailForPhishingOutput | null>(null);
+  const [result, setResult] =
+    React.useState<AnalyzeEmailForPhishingOutput | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,8 +50,20 @@ export function EmailScreenerForm() {
     setIsLoading(true);
     setResult(null);
     try {
-      const analysisResult = await analyzeEmailForPhishing({ email_content: values.emailContent });
+      const analysisResult = await analyzeEmailForPhishing({
+        email_content: values.emailContent,
+      });
       setResult(analysisResult);
+
+      if (firestore) {
+        const historyCollection = collection(firestore, 'analysis_history');
+        await addDoc(historyCollection, {
+          ...analysisResult,
+          agent: 'Email Screener',
+          createdAt: serverTimestamp(),
+        });
+      }
+
       form.reset({ emailContent: '' });
     } catch (e) {
       toast({
@@ -72,7 +91,9 @@ export function EmailScreenerForm() {
                 name="emailContent"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Paste the full content of the email below</FormLabel>
+                    <FormLabel>
+                      Paste the full content of the email below
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="From: suspicious@example.com..."
@@ -85,7 +106,9 @@ export function EmailScreenerForm() {
                 )}
               />
               <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Analyze Email
               </Button>
             </form>
