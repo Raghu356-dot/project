@@ -21,9 +21,9 @@ let auth: Auth | undefined;
 let firestore: Firestore | undefined;
 
 function initializeFirebase(): {
-  firebaseApp: FirebaseApp;
-  auth: Auth;
-  firestore: Firestore;
+  firebaseApp: FirebaseApp | null;
+  auth: Auth | null;
+  firestore: Firestore | null;
 } {
   if (
     !firebaseApp &&
@@ -31,7 +31,8 @@ function initializeFirebase(): {
     !getApps()?.length
   ) {
     if (!firebaseConfig.apiKey) {
-      throw new Error('Firebase API key is missing. Please check your configuration.');
+      console.warn('Firebase API key is missing. Firebase features will be disabled.');
+      return { firebaseApp: null, auth: null, firestore: null };
     }
     firebaseApp = initializeApp(firebaseConfig);
     auth = getAuth(firebaseApp);
@@ -39,9 +40,9 @@ function initializeFirebase(): {
   }
 
   return {
-    firebaseApp: firebaseApp!,
-    auth: auth!,
-    firestore: firestore!,
+    firebaseApp: firebaseApp || null,
+    auth: auth || null,
+    firestore: firestore || null,
   };
 }
 export {
